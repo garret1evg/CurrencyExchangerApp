@@ -1,11 +1,13 @@
 package ua.chmutov.currencyexchangerapp.repository
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
+import ua.chmutov.currencyexchangerapp.constants.BASE_AMOUNT
+import ua.chmutov.currencyexchangerapp.constants.BASE_CURRENCY
 import ua.chmutov.currencyexchangerapp.db.LocalDataSource
 import ua.chmutov.currencyexchangerapp.db.mapper.toListCurrencyModel
+import ua.chmutov.currencyexchangerapp.db.model.UserModel
+import ua.chmutov.currencyexchangerapp.db.model.WalletModel
 import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
 import ua.chmutov.currencyexchangerapp.ui.model.User
 import java.lang.Exception
@@ -19,7 +21,7 @@ class MainRepository(
 
     fun getCurrencies() = localDataSource.getCurrencies()
 
-    suspend fun refreshCurrencies(){
+    suspend fun refreshCurrencies() {
         try {
             val response = networkDataSource.getCurrencyRates()
             val result = response.body()
@@ -35,7 +37,15 @@ class MainRepository(
 
     fun getFirstUser() = localDataSource.getFirstUser()
 
-    suspend fun createDefaultUser() = localDataSource.createDefaultUser()
+    suspend fun createDefaultPreset() {
+        val newUser = UserModel()
+        val currency = BASE_CURRENCY
+        val newWallet = WalletModel(usrId = newUser.id, currency = currency, amount = BASE_AMOUNT)
+        localDataSource.createDefaultUser(newUser)
+        localDataSource.createDefaultWallet(newWallet)
+    }
 
     suspend fun updateUser(user: User) = localDataSource.updateUser(user)
+
+    fun getWallets() = localDataSource.getWallets()
 }

@@ -17,7 +17,6 @@ import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
 import javax.inject.Singleton
 
-
 private const val CURRENCY_RATES_URL = "https://6319aede8e51a64d2be9aa01.mockapi.io/api/v1/"
 private const val DATABASE_NAME = "app-db"
 

@@ -45,6 +45,8 @@ class MainFragment : Fragment() {
 
         currencySellCurrencySpinner.adapter = sellCurrencyAdapter
 
+        myBalancesRecycler.adapter = WalletsAdapter(viewLifecycleOwner)
+
         viewModel.currencyList.onEach { list ->
             receiveCurrencyAdapter.clear()
             receiveCurrencyAdapter.addAll(list.map { it.name })
@@ -55,6 +57,12 @@ class MainFragment : Fragment() {
             sellCurrencyAdapter.clear()
             sellCurrencyAdapter.addAll(list.map { it.name })
             sellCurrencyAdapter.notifyDataSetChanged()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.walletsItem.onEach {
+            (myBalancesRecycler.adapter as? WalletsAdapter)?.submitList(
+                it
+            )
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
     }.root
@@ -68,7 +76,7 @@ class MainFragment : Fragment() {
             viewModel.receiveCurrency.value = viewModel.currencyList.value[position]
         }
 
-        fun onButtonClick(){
+        fun onButtonClick() {
             viewModel.trade()
         }
     }

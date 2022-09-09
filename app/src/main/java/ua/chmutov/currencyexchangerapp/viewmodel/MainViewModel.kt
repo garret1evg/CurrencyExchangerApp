@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import ua.chmutov.currencyexchangerapp.delayloops.DelayCurrencyUpdateLoop
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
 import ua.chmutov.currencyexchangerapp.ui.model.Currency
+import ua.chmutov.currencyexchangerapp.ui.model.Wallet
 import javax.inject.Inject
 
 private const val DELAY_UPDATE_MILLIS = 5000L
@@ -36,6 +37,17 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     val receiveCurrency = MutableStateFlow<Currency?>(null)
 
+    val wallets = mainRepository.getWallets()
+
+    val walletsItem = combine(wallets, currencyList, currentUser) { wallets, currencyList, user ->
+        return@combine mutableListOf<Wallet>().apply {
+            currencyList.forEach { currency ->
+                add(wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }
+                    ?: Wallet(user.id, currency.name, 0))
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), mutableListOf())
+
     val receiveAmount = combine(
         sellAmount,
         sellCurrency,
@@ -51,7 +63,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     init {
         DelayCurrencyUpdateLoop(this, mainRepository, Dispatchers.Default).loop(DELAY_UPDATE_MILLIS)
-        viewModelScope.launch { mainRepository.createDefaultUser() }
+        viewModelScope.launch { mainRepository.createDefaultPreset() }
 
     }
 
