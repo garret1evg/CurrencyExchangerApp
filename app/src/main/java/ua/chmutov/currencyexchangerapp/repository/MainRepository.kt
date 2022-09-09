@@ -1,0 +1,29 @@
+package ua.chmutov.currencyexchangerapp.repository
+
+import timber.log.Timber
+import ua.chmutov.currencyexchangerapp.db.LocalDataSource
+import ua.chmutov.currencyexchangerapp.db.mapper.toListCurrencyModel
+import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
+import java.lang.Exception
+import javax.inject.Singleton
+
+@Singleton
+class MainRepository(
+    private val networkDataSource: NetworkDataSource,
+    private val localDataSource: LocalDataSource
+) {
+
+    suspend fun refreshCurrencies(){
+        try {
+            val response = networkDataSource.getCurrencyRates()
+            val result = response.body()
+            if (response.isSuccessful && result != null) {
+                localDataSource.saveCurrencies(result.toListCurrencyModel())
+            } else {
+                Timber.e(response.message())
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message ?: "An Error occured")
+        }
+    }
+}
