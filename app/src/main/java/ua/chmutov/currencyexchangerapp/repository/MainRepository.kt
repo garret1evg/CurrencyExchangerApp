@@ -7,6 +7,7 @@ import timber.log.Timber
 import ua.chmutov.currencyexchangerapp.db.LocalDataSource
 import ua.chmutov.currencyexchangerapp.db.mapper.toListCurrencyModel
 import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
+import ua.chmutov.currencyexchangerapp.ui.model.User
 import java.lang.Exception
 import javax.inject.Singleton
 
@@ -31,4 +32,10 @@ class MainRepository(
             Timber.e(e.message ?: "An Error occured")
         }
     }
+
+    fun getFirstUser() = localDataSource.getFirstUser()
+
+    suspend fun createDefaultUser() = localDataSource.createDefaultUser()
+
+    suspend fun updateUser(user: User) = localDataSource.updateUser(user)
 }

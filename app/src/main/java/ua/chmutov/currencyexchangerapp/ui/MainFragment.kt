@@ -68,5 +68,8 @@ class MainFragment : Fragment() {
             viewModel.receiveCurrency.value = viewModel.currencyList.value[position]
         }
 
+        fun onButtonClick(){
+            viewModel.trade()
+        }
     }
 }

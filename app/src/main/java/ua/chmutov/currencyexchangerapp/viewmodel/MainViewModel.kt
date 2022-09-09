@@ -3,9 +3,11 @@ package ua.chmutov.currencyexchangerapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ua.chmutov.currencyexchangerapp.delayloops.DelayCurrencyUpdateLoop
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
 import ua.chmutov.currencyexchangerapp.ui.model.Currency
@@ -19,6 +21,8 @@ private const val INIT_SELL_AMOUNT = "100.00"
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 
     val currencyUpdateLoopState = MutableStateFlow<LoopState>(LoopState.Active)
+
+    val currentUser = mainRepository.getFirstUser()
 
     val currencyList = mainRepository.getCurrencies()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -47,6 +51,16 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     init {
         DelayCurrencyUpdateLoop(this, mainRepository, Dispatchers.Default).loop(DELAY_UPDATE_MILLIS)
+        viewModelScope.launch { mainRepository.createDefaultUser() }
+
+    }
+
+    fun trade() {
+        viewModelScope.launch {
+            currentUser.firstOrNull()
+                ?.let { mainRepository.updateUser(it.copy(tradesNum = it.tradesNum + 1)) }
+        }
+
     }
 
 
