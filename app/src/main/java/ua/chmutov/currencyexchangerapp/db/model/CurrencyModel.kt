@@ -8,14 +8,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity(
-    tableName = "currency",
-    indices = [Index(value = ["name"], unique = true)]
+    tableName = "currency"
 )
 data class CurrencyModel(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    val id: Long = 0L,
-
+    @PrimaryKey
     @ColumnInfo(name = "name")
     val name: String,
 
