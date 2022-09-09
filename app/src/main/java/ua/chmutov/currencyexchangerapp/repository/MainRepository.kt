@@ -1,5 +1,8 @@
 package ua.chmutov.currencyexchangerapp.repository
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import ua.chmutov.currencyexchangerapp.db.LocalDataSource
 import ua.chmutov.currencyexchangerapp.db.mapper.toListCurrencyModel
@@ -12,6 +15,8 @@ class MainRepository(
     private val networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource
 ) {
+
+    fun getCurrencies() = localDataSource.getCurrencies()
 
     suspend fun refreshCurrencies(){
         try {

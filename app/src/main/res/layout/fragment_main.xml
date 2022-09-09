@@ -11,7 +11,7 @@
 
         <variable
             name="presenter"
-            type="ua.chmutov.currencyexchangerapp.MainFragment.Presenter" />
+            type="ua.chmutov.currencyexchangerapp.ui.MainFragment.Presenter" />
 
     </data>
 
@@ -87,24 +87,26 @@
                         android:textColor="@color/black"
                         android:text="@string/sell"
                         android:layout_weight="1"/>
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/currency_sell_amount"
-                        android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
+                        android:layout_gravity="center_vertical"
                         android:inputType="numberDecimal"
-                        app:boxBackgroundMode="none"
-                        android:text="100.00"/>
-                    <TextView
-                        android:id="@+id/currency_sell_currency"
+                        app:editableItemText="@={model.uiSellAmount}"
+                        android:textColor="@color/black"
+                        app:boxBackgroundMode="none" />
+
+                    <Spinner
+                        android:id="@+id/currency_sell_currency_spinner"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:layout_marginEnd="16dp"
-                        android:text="EUR"/>
+                        android:onItemSelected='@{ (ad,v,p,id) -> presenter.onSellCurrencySelected(p)}' />
                 </LinearLayout>
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
@@ -152,16 +154,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/green"
-                        android:text="+ 100.00"/>
-                    <TextView
-                        android:id="@+id/currency_receive_currency"
+                        android:text="@{model.uiReceiveAmount}"/>
+                    <Spinner
+                        android:id="@+id/currency_receive_currency_spinner"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="16dp"
-                        android:text="EUR"/>
+                        android:onItemSelected='@{ (ad,v,p,id) -> presenter.onReceiveCurrencySelected(p)}'
+                        android:layout_marginEnd="16dp" />
                 </LinearLayout>
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"

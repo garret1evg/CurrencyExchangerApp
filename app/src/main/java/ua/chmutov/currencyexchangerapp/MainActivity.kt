@@ -3,6 +3,7 @@ package ua.chmutov.currencyexchangerapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
+import ua.chmutov.currencyexchangerapp.ui.MainFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
