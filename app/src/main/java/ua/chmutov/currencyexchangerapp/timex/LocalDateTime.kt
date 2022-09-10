@@ -7,9 +7,10 @@ import java.time.format.DateTimeFormatter
 
 private val zonedLocalDateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-val localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-
-private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+private val localDateTimeFormatter =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+private val localDateFormatter =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 @JvmName("toLocalDateTimeNonNull")
 fun String.toLocalDateTime(): LocalDateTime =

@@ -13,6 +13,6 @@ fun List<CurrencyModel>.toCurrency() = map { it.toCurrency() }
 
 fun UserModel.toUser() = User(id, name, tradesNum)
 
-fun WalletModel.toWallet() = Wallet(id ,usrId, currency, amount)
+fun WalletModel.toWallet() = Wallet(id, usrId, currency, amount)
 
 fun List<WalletModel>.toWallet() = map { it.toWallet() }

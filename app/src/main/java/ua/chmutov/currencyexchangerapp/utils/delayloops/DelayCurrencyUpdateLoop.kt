@@ -1,4 +1,4 @@
-package ua.chmutov.currencyexchangerapp.delayloops
+package ua.chmutov.currencyexchangerapp.utils.delayloops
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.channelFlow
@@ -35,6 +35,6 @@ class DelayCurrencyUpdateLoop(
                 delay(delay)
             }
         }.flowOn(dispatcher)
-        CoroutineScope(Dispatchers.Default).launch { data.collect {} }
+        CoroutineScope(dispatcher).launch { data.collect {} }
     }
 }

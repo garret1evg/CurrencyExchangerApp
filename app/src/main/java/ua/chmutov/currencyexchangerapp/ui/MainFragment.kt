@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ua.chmutov.currencyexchangerapp.databinding.FragmentMainBinding
 import ua.chmutov.currencyexchangerapp.viewmodel.MainViewModel
+import ua.chmutov.currencyexchangerapp.viewmodel.TransactionEvent
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -63,6 +65,33 @@ class MainFragment : Fragment() {
             (myBalancesRecycler.adapter as? WalletsAdapter)?.submitList(
                 it
             )
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.transaction.onEach {
+            when (it) {
+                is TransactionEvent.Success -> Toast.makeText(
+                    requireContext(),
+                    "Success ${it.transaction}",
+                    Toast.LENGTH_LONG
+                ).show()
+                is TransactionEvent.SameCurrency -> Toast.makeText(
+                    requireContext(),
+                    "SameCurrency ${it.currency}",
+                    Toast.LENGTH_LONG
+                ).show()
+                is TransactionEvent.NotEnoughMoney -> Toast.makeText(
+                    requireContext(),
+                    "NotEnoughMoney",
+                    Toast.LENGTH_LONG
+                ).show()
+                is TransactionEvent.Failure -> Toast.makeText(
+                    requireContext(),
+                    "Failure",
+                    Toast.LENGTH_LONG
+                ).show()
+                else -> {}
+            }
+            viewModel.resetEvent()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
     }.root

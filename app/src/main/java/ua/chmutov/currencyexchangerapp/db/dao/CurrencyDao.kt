@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ua.chmutov.currencyexchangerapp.db.model.CurrencyModel
 import kotlinx.coroutines.flow.Flow
+import ua.chmutov.currencyexchangerapp.db.model.CurrencyModel
 
 @Dao
 interface CurrencyDao {

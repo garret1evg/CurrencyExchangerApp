@@ -8,7 +8,7 @@ import java.time.LocalDate
 @Entity(
     tableName = "transaction"
 )
-data class TransactionModel (
+data class TransactionModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long,

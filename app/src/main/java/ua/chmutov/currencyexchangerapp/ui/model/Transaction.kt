@@ -3,7 +3,6 @@ package ua.chmutov.currencyexchangerapp.ui.model
 import java.time.LocalDate
 
 data class Transaction(
-    val id: Long,
     val fromWalletId: Long,
     val toWalletId: Long,
     val fromExRate: Double,

@@ -2,10 +2,8 @@ package ua.chmutov.currencyexchangerapp.db.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Entity(
     tableName = "currency"

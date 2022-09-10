@@ -6,7 +6,7 @@ import ua.chmutov.currencyexchangerapp.network.model.CurrencyRatesResponse
 
 interface CurrencyRatesApi {
 
-    @GET ("/currency")
-    suspend fun getCurrencyRates () : Response<CurrencyRatesResponse>
+    @GET("/currency")
+    suspend fun getCurrencyRates(): Response<CurrencyRatesResponse>
 
 }

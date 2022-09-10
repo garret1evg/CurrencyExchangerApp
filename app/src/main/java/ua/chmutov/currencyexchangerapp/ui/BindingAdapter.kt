@@ -16,6 +16,7 @@ fun bindSetEditableItemText(view: TextInputEditText, enteredText: String) = view
         }
     }
 }
+
 @InverseBindingAdapter(attribute = "editableItemText")
 fun bindGetEditableItemText(view: TextInputEditText): String {
     return view.text.toString()
@@ -39,6 +40,6 @@ fun bindSetWalletInfo(
     wallet: Wallet?
 ) = view.apply {
     wallet?.let {
-        text = "${it.amount/100.00} ${it.currency}"
+        text = "${it.amount / 100.00} ${it.currency}"
     }
 }

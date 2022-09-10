@@ -1,7 +1,6 @@
-package ua.chmutov.currencyexchangerapp.delayloops
+package ua.chmutov.currencyexchangerapp.utils.delayloops
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 
 interface DelayLoop {
     @ExperimentalCoroutinesApi

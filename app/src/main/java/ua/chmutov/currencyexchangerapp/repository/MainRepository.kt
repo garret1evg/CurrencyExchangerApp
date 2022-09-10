@@ -1,6 +1,5 @@
 package ua.chmutov.currencyexchangerapp.repository
 
-import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import ua.chmutov.currencyexchangerapp.constants.BASE_AMOUNT
 import ua.chmutov.currencyexchangerapp.constants.BASE_CURRENCY
@@ -10,7 +9,6 @@ import ua.chmutov.currencyexchangerapp.db.model.UserModel
 import ua.chmutov.currencyexchangerapp.db.model.WalletModel
 import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
 import ua.chmutov.currencyexchangerapp.ui.model.User
-import java.lang.Exception
 import javax.inject.Singleton
 
 @Singleton

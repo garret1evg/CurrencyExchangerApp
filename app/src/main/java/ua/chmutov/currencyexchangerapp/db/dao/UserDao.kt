@@ -1,7 +1,6 @@
 package ua.chmutov.currencyexchangerapp.db.dao
 
 import androidx.room.*
-import ua.chmutov.currencyexchangerapp.db.model.CurrencyModel
 import kotlinx.coroutines.flow.Flow
 import ua.chmutov.currencyexchangerapp.db.model.UserModel
 

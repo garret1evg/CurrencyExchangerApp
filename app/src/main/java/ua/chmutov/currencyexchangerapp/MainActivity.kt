@@ -1,7 +1,7 @@
 package ua.chmutov.currencyexchangerapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import ua.chmutov.currencyexchangerapp.ui.MainFragment
 
@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, MainFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, MainFragment())
+            .commit()
     }
 }

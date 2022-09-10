@@ -3,16 +3,16 @@ package ua.chmutov.currencyexchangerapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ua.chmutov.currencyexchangerapp.delayloops.DelayCurrencyUpdateLoop
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
 import ua.chmutov.currencyexchangerapp.ui.model.Currency
 import ua.chmutov.currencyexchangerapp.ui.model.Transaction
 import ua.chmutov.currencyexchangerapp.ui.model.Wallet
+import ua.chmutov.currencyexchangerapp.utils.comissioncontroller.CommissionControllerFirstXFree
+import ua.chmutov.currencyexchangerapp.utils.delayloops.DelayCurrencyUpdateLoop
 import javax.inject.Inject
 
 private const val DELAY_UPDATE_MILLIS = 5000L
@@ -21,6 +21,9 @@ private const val INIT_SELL_AMOUNT = "100.00"
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
+
+    private val _transaction = MutableStateFlow<TransactionEvent>(TransactionEvent.Empty)
+    val transaction: StateFlow<TransactionEvent> = _transaction
 
     val currencyUpdateLoopState = MutableStateFlow<LoopState>(LoopState.Active)
 
@@ -44,7 +47,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
         return@combine mutableListOf<Wallet>().apply {
             currencyList.forEach { currency ->
                 add(wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }
-                    ?: Wallet(usrId =user.id, currency = currency.name, amount = 0))
+                    ?: Wallet(usrId = user.id, currency = currency.name, amount = 0))
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), mutableListOf())
@@ -68,14 +71,42 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     }
 
+    suspend fun resetEvent() {
+        _transaction.emit(TransactionEvent.Empty)
+    }
+
     fun trade() {
         viewModelScope.launch {
-            currentUser.firstOrNull()
-                ?.let { mainRepository.updateUser(it.copy(tradesNum = it.tradesNum + 1)) }
+            runCatching {
+
+                if (sellCurrency.firstOrNull() != null && sellCurrency.firstOrNull() == receiveCurrency.firstOrNull()) {
+                    _transaction.emit(
+                        TransactionEvent.SameCurrency(
+                            sellCurrency.first()!!.name
+                        )
+                    )
+                    return@launch
+                }
+
+                val commission =
+                    CommissionControllerFirstXFree(currentUser.first().tradesNum)
+                        .calculateCommission(
+                            sellAmount.first()
+                        )
+
+
+                currentUser.firstOrNull()
+                    ?.let { mainRepository.updateUser(it.copy(tradesNum = it.tradesNum + 1)) }
+
+            }.onFailure { ex ->
+                _transaction.emit(
+                    TransactionEvent.Failure
+                )
+            }
+
         }
 
     }
-
 
 }
 
