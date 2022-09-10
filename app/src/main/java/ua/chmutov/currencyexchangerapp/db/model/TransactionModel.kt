@@ -8,7 +8,7 @@ import java.time.LocalDate
 @Entity(
     tableName = "transaction"
 )
-class TransactionModel (
+data class TransactionModel (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long,
@@ -25,8 +25,11 @@ class TransactionModel (
     @ColumnInfo(name = "to_ex_rate")
     val toExRate: Double,
 
-    @ColumnInfo(name = "amount")
-    val amount: Long,
+    @ColumnInfo(name = "from_amount")
+    val fromAmount: Long,
+
+    @ColumnInfo(name = "to_amount")
+    val toAmount: Long,
 
     @ColumnInfo(name = "commission")
     val commission: Long,

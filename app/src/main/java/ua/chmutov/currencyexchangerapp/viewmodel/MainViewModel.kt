@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import ua.chmutov.currencyexchangerapp.delayloops.DelayCurrencyUpdateLoop
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
 import ua.chmutov.currencyexchangerapp.ui.model.Currency
+import ua.chmutov.currencyexchangerapp.ui.model.Transaction
 import ua.chmutov.currencyexchangerapp.ui.model.Wallet
 import javax.inject.Inject
 
@@ -43,7 +44,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
         return@combine mutableListOf<Wallet>().apply {
             currencyList.forEach { currency ->
                 add(wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }
-                    ?: Wallet(user.id, currency.name, 0))
+                    ?: Wallet(usrId =user.id, currency = currency.name, amount = 0))
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), mutableListOf())
@@ -81,4 +82,12 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 sealed class LoopState {
     object Active : LoopState()
     object Inactive : LoopState()
+}
+
+sealed class TransactionEvent {
+    class Success(val transaction: Transaction) : TransactionEvent()
+    class SameCurrency(val currency: String) : TransactionEvent()
+    object NotEnoughMoney : TransactionEvent()
+    object Failure : TransactionEvent()
+    object Empty : TransactionEvent()
 }

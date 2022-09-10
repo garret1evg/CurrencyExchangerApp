@@ -31,9 +31,8 @@ class DelayCurrencyUpdateLoop(
                 }.onSuccess {
                     Timber.d("Refresh currency succeed!")
                 }.getOrNull()
-
-                delay(delay)
                 send(Unit)
+                delay(delay)
             }
         }.flowOn(dispatcher)
         CoroutineScope(Dispatchers.Default).launch { data.collect {} }
