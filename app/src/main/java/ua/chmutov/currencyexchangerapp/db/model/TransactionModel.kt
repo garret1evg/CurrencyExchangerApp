@@ -11,7 +11,10 @@ import java.time.LocalDate
 data class TransactionModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: Long = 0L,
+
+    @ColumnInfo(name = "usr_id")
+    val usrId: Long,
 
     @ColumnInfo(name = "from_wallet_id")
     val fromWalletId: Long,

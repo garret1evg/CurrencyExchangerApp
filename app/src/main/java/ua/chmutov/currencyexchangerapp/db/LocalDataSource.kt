@@ -1,14 +1,13 @@
 package ua.chmutov.currencyexchangerapp.db
 
 import kotlinx.coroutines.flow.map
-import ua.chmutov.currencyexchangerapp.db.mapper.toCurrency
-import ua.chmutov.currencyexchangerapp.db.mapper.toUser
-import ua.chmutov.currencyexchangerapp.db.mapper.toUserModel
-import ua.chmutov.currencyexchangerapp.db.mapper.toWallet
+import ua.chmutov.currencyexchangerapp.db.mapper.*
 import ua.chmutov.currencyexchangerapp.db.model.CurrencyModel
 import ua.chmutov.currencyexchangerapp.db.model.UserModel
 import ua.chmutov.currencyexchangerapp.db.model.WalletModel
+import ua.chmutov.currencyexchangerapp.ui.model.Transaction
 import ua.chmutov.currencyexchangerapp.ui.model.User
+import ua.chmutov.currencyexchangerapp.ui.model.Wallet
 
 class LocalDataSource(
     private val database: AppDatabase
@@ -30,5 +29,14 @@ class LocalDataSource(
     suspend fun createDefaultWallet(walletModel: WalletModel) =
         database.walletDao().insertWallet(walletModel)
 
+    suspend fun createWallet(wallet: Wallet): Long {
+        val walletModel = wallet.toWalletModel()
+        database.walletDao().insertWallet(walletModel)
+        return walletModel.id
+    }
+
     fun getWallets() = database.walletDao().getWallets().map { it.toWallet() }
+
+    suspend fun createTransaction(transaction: Transaction) =
+        database.transactionDao().createTransaction(transaction.toTransactionModel())
 }

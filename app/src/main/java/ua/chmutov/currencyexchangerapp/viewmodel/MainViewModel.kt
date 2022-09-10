@@ -13,6 +13,7 @@ import ua.chmutov.currencyexchangerapp.ui.model.Transaction
 import ua.chmutov.currencyexchangerapp.ui.model.Wallet
 import ua.chmutov.currencyexchangerapp.utils.comissioncontroller.CommissionControllerFirstXFree
 import ua.chmutov.currencyexchangerapp.utils.delayloops.DelayCurrencyUpdateLoop
+import java.time.LocalDate
 import javax.inject.Inject
 
 private const val DELAY_UPDATE_MILLIS = 5000L
@@ -88,19 +89,55 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     return@launch
                 }
 
+                val user = currentUser.first()
+
+                val fromCurrency = sellCurrency.first()!!
+                val toCurrency = receiveCurrency.first()!!
+
                 val commission =
                     CommissionControllerFirstXFree(currentUser.first().tradesNum)
-                        .calculateCommission(
-                            sellAmount.first()
+                        .calculateCommission(sellAmount.first())
+                val fromAmount = sellAmount.first()
+                val toAmount = receiveAmount.first()
+                val walletFrom = wallets.firstOrNull()
+                    ?.firstOrNull { it.currency == fromCurrency.name && it.usrId == user.id }
+                if (walletFrom == null || walletFrom.amount < fromAmount + commission) {
+                    _transaction.emit(
+                        TransactionEvent.NotEnoughMoney
+                    )
+                    return@launch
+                }
+
+                val walletTo = wallets.firstOrNull()
+                    ?.firstOrNull { it.currency == toCurrency.name && it.usrId == user.id }
+                val walletToId =
+                    walletTo?.id ?: mainRepository.createWallet(
+                        Wallet(
+                            usrId = user.id,
+                            currency = toCurrency.name
                         )
+                    )
 
-
-                currentUser.firstOrNull()
-                    ?.let { mainRepository.updateUser(it.copy(tradesNum = it.tradesNum + 1)) }
-
+                val transaction = Transaction(
+                    user.id,
+                    walletFrom.id,
+                    walletToId,
+                    fromCurrency.exchangeRate,
+                    toCurrency.exchangeRate,
+                    fromAmount,
+                    toAmount,
+                    commission,
+                    LocalDate.now()
+                )
+                mainRepository.createTransaction(transaction)
+                transaction
             }.onFailure { ex ->
                 _transaction.emit(
                     TransactionEvent.Failure
+                )
+            }.onSuccess {
+                _transaction.emit(
+                    TransactionEvent.Success(it)
                 )
             }
 
