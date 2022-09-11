@@ -5,4 +5,12 @@
     <string name="sell">Sell</string>
     <string name="receive">Receive</string>
     <string name="submit">Submit</string>
+    <string name="done">Done</string>
+    <string name="ok">OK</string>
+    <string name="convert_success_title">Currency converted</string>
+    <string name="convert_success">You have converted %s %s to %s %s. Commission fee - %s %s.</string>
+    <string name="same_currency_title">Same currency %s</string>
+    <string name="same_currency">Sending money between user is in the upcoming releases</string>
+    <string name="not_enough_money">Not enough money on account</string>
+    <string name="error">Unexpected error</string>
 </resources>

@@ -8,11 +8,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ua.chmutov.currencyexchangerapp.R
 import ua.chmutov.currencyexchangerapp.databinding.FragmentMainBinding
 import ua.chmutov.currencyexchangerapp.viewmodel.MainViewModel
 import ua.chmutov.currencyexchangerapp.viewmodel.TransactionEvent
@@ -71,24 +73,38 @@ class MainFragment : Fragment() {
 
         viewModel.transaction.onEach {
             when (it) {
-                is TransactionEvent.Success -> Toast.makeText(
-                    requireContext(),
-                    "Success ${it.transaction}",
-                    Toast.LENGTH_LONG
-                ).show()
-                is TransactionEvent.SameCurrency -> Toast.makeText(
-                    requireContext(),
-                    "SameCurrency ${it.currency}",
-                    Toast.LENGTH_LONG
-                ).show()
+                is TransactionEvent.Success -> MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(resources.getString(R.string.convert_success_title))
+                    .setMessage(
+                        resources.getString(
+                            R.string.convert_success,
+                            (it.transaction.fromAmount / 100.0).toString(),
+                            it.transaction.fromCurrency.name,
+                            (it.transaction.toAmount / 100.0).toString(),
+                            it.transaction.toCurrency.name,
+                            (it.transaction.commission / 100.0).toString(),
+                            it.transaction.fromCurrency.name
+                        )
+                    )
+                    .setPositiveButton(resources.getString(R.string.done)) { _, _ -> }
+                    .show()
+                is TransactionEvent.SameCurrency -> MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(resources.getString(R.string.same_currency_title, it.currency))
+                    .setMessage(
+                        resources.getString(
+                            R.string.same_currency
+                        )
+                    )
+                    .setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
+                    .show()
                 is TransactionEvent.NotEnoughMoney -> Toast.makeText(
                     requireContext(),
-                    "NotEnoughMoney",
-                    Toast.LENGTH_LONG
+                    resources.getString(R.string.not_enough_money),
+                    Toast.LENGTH_SHORT
                 ).show()
                 is TransactionEvent.Failure -> Toast.makeText(
                     requireContext(),
-                    "Failure",
+                    resources.getString(R.string.error),
                     Toast.LENGTH_LONG
                 ).show()
                 else -> {}
