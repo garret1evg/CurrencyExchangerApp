@@ -29,11 +29,8 @@ class LocalDataSource(
     suspend fun createDefaultWallet(walletModel: WalletModel) =
         database.walletDao().insertWallet(walletModel)
 
-    suspend fun createWallet(wallet: Wallet): Long {
-        val walletModel = wallet.toWalletModel()
-        database.walletDao().insertWallet(walletModel)
-        return walletModel.id
-    }
+    suspend fun createWallet(wallet: Wallet) =
+        database.walletDao().insertWallet(wallet.toWalletModel())
 
     fun getWallets() = database.walletDao().getWallets().map { it.toWallet() }
 

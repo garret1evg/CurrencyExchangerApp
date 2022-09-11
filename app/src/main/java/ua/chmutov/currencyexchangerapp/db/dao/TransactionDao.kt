@@ -2,7 +2,6 @@ package ua.chmutov.currencyexchangerapp.db.dao
 
 import androidx.room.*
 import ua.chmutov.currencyexchangerapp.db.model.TransactionModel
-import ua.chmutov.currencyexchangerapp.db.model.UserModel
 
 @Dao
 interface TransactionDao {
@@ -19,7 +18,10 @@ interface TransactionDao {
     @Transaction
     suspend fun createTransaction(transactionModel: TransactionModel) {
         increaseUserNumTrade(transactionModel.usrId)
-        updateWalletAmount(transactionModel.fromWalletId, -transactionModel.fromAmount)
+        updateWalletAmount(
+            transactionModel.fromWalletId,
+            -transactionModel.fromAmount - transactionModel.commission
+        )
         updateWalletAmount(transactionModel.toWalletId, transactionModel.toAmount)
         insertTransaction(transactionModel)
     }

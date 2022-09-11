@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ua.chmutov.currencyexchangerapp.databinding.FragmentMainBinding
 import ua.chmutov.currencyexchangerapp.viewmodel.MainViewModel
 import ua.chmutov.currencyexchangerapp.viewmodel.TransactionEvent
@@ -98,11 +100,16 @@ class MainFragment : Fragment() {
 
     inner class Presenter {
         fun onSellCurrencySelected(position: Int) {
-            viewModel.sellCurrency.value = viewModel.currencyList.value[position]
+            lifecycleScope.launch {
+                viewModel.sellCurrency.emit(viewModel.currencyList.firstOrNull()?.get(position))
+            }
+
         }
 
         fun onReceiveCurrencySelected(position: Int) {
-            viewModel.receiveCurrency.value = viewModel.currencyList.value[position]
+            lifecycleScope.launch {
+                viewModel.receiveCurrency.emit(viewModel.currencyList.firstOrNull()?.get(position))
+            }
         }
 
         fun onButtonClick() {

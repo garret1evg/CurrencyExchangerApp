@@ -47,8 +47,9 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     val walletsItem = combine(wallets, currencyList, currentUser) { wallets, currencyList, user ->
         return@combine mutableListOf<Wallet>().apply {
             currencyList.forEach { currency ->
-                add(wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }
-                    ?: Wallet(usrId = user.id, currency = currency.name, amount = 0))
+                wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }?.let {
+                    add(it)
+                } ?: mainRepository.createWallet(Wallet(usrId = user.id, currency = currency.name))
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), mutableListOf())
@@ -100,28 +101,20 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                 val fromAmount = sellAmount.first()
                 val toAmount = receiveAmount.first()
                 val walletFrom = wallets.firstOrNull()
-                    ?.firstOrNull { it.currency == fromCurrency.name && it.usrId == user.id }
-                if (walletFrom == null || walletFrom.amount < fromAmount + commission) {
+                    ?.first { it.currency == fromCurrency.name && it.usrId == user.id }
+                if (walletFrom!!.amount < fromAmount + commission) {
                     _transaction.emit(
                         TransactionEvent.NotEnoughMoney
                     )
                     return@launch
                 }
-
                 val walletTo = wallets.firstOrNull()
-                    ?.firstOrNull { it.currency == toCurrency.name && it.usrId == user.id }
-                val walletToId =
-                    walletTo?.id ?: mainRepository.createWallet(
-                        Wallet(
-                            usrId = user.id,
-                            currency = toCurrency.name
-                        )
-                    )
+                    ?.first { it.currency == toCurrency.name && it.usrId == user.id }
 
                 val transaction = Transaction(
                     user.id,
                     walletFrom.id,
-                    walletToId,
+                    walletTo!!.id,
                     fromCurrency.exchangeRate,
                     toCurrency.exchangeRate,
                     fromAmount,
@@ -140,11 +133,8 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     TransactionEvent.Success(it)
                 )
             }
-
         }
-
     }
-
 }
 
 sealed class LoopState {
