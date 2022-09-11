@@ -37,14 +37,6 @@ class MainRepository(
 
     fun getFirstUser() = localDataSource.getFirstUser()
 
-    suspend fun createDefaultPreset() {
-        val newUser = UserModel()
-        val currency = BASE_CURRENCY
-        val newWallet = WalletModel(usrId = newUser.id, currency = currency, amount = BASE_AMOUNT)
-        localDataSource.createDefaultUser(newUser)
-        localDataSource.createDefaultWallet(newWallet)
-    }
-
     suspend fun updateUser(user: User) = localDataSource.updateUser(user)
 
     fun getWallets() = localDataSource.getWallets()

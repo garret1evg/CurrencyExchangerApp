@@ -69,8 +69,6 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     init {
         DelayCurrencyUpdateLoop(this, mainRepository, Dispatchers.Default).loop(DELAY_UPDATE_MILLIS)
-        viewModelScope.launch { mainRepository.createDefaultPreset() }
-
     }
 
     suspend fun resetEvent() {

@@ -22,12 +22,7 @@ class LocalDataSource(
 
     suspend fun saveUser(user: User) = database.userDao().insertUser(user.toUserModel())
 
-    suspend fun createDefaultUser(userModel: UserModel) = database.userDao().insertUser(userModel)
-
     suspend fun updateUser(user: User) = database.userDao().updateUser(user.toUserModel())
-
-    suspend fun createDefaultWallet(walletModel: WalletModel) =
-        database.walletDao().insertWallet(walletModel)
 
     suspend fun createWallet(wallet: Wallet) =
         database.walletDao().insertWallet(wallet.toWalletModel())

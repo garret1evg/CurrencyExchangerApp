@@ -12,9 +12,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ua.chmutov.currencyexchangerapp.db.AppDatabase
 import ua.chmutov.currencyexchangerapp.db.LocalDataSource
+import ua.chmutov.currencyexchangerapp.db.callbacks.InitRecordsCallback
+import ua.chmutov.currencyexchangerapp.db.dao.UserDao
+import ua.chmutov.currencyexchangerapp.db.dao.WalletDao
 import ua.chmutov.currencyexchangerapp.network.CurrencyRatesApi
 import ua.chmutov.currencyexchangerapp.network.NetworkDataSource
 import ua.chmutov.currencyexchangerapp.repository.MainRepository
+import javax.inject.Provider
 import javax.inject.Singleton
 
 private const val CURRENCY_RATES_URL = "https://6319aede8e51a64d2be9aa01.mockapi.io/api/v1/"
@@ -41,9 +45,22 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAccountDatabase(@ApplicationContext context: Context): AppDatabase =
+    fun provideAppDatabase(
+        @ApplicationContext context: Context,
+        userProvider: Provider<UserDao>,
+        walletProvider: Provider<WalletDao>
+    ): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+            .addCallback(InitRecordsCallback(userProvider, walletProvider))
             .build()
+
+    @Singleton
+    @Provides
+    fun provideUserDao(database: AppDatabase) = database.userDao()
+
+    @Singleton
+    @Provides
+    fun provideWalletDao(database: AppDatabase) = database.walletDao()
 
     @Singleton
     @Provides
