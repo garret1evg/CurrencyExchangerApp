@@ -11,7 +11,7 @@ interface UserDao {
     fun getUsers(): Flow<List<UserModel>>
 
     @Query("SELECT * FROM user LIMIT 1")
-    fun getFirstUser(): Flow<UserModel>
+    fun getFirstUser(): Flow<UserModel?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUsers(users: List<UserModel>)

@@ -18,7 +18,7 @@ class LocalDataSource(
     suspend fun saveCurrencies(currencies: List<CurrencyModel>) =
         database.currencyDao().insertCurrencies(currencies)
 
-    fun getFirstUser() = database.userDao().getFirstUser().map { it.toUser() }
+    fun getFirstUser() = database.userDao().getFirstUser().map { it?.toUser() }
 
     suspend fun saveUser(user: User) = database.userDao().insertUser(user.toUserModel())
 

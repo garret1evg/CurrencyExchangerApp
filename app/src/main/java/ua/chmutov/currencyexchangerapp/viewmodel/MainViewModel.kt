@@ -47,9 +47,9 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     val walletsItem = combine(wallets, currencyList, currentUser) { wallets, currencyList, user ->
         return@combine mutableListOf<Wallet>().apply {
             currencyList.forEach { currency ->
-                wallets.firstOrNull { it.currency == currency.name && it.usrId == user.id }?.let {
+                wallets.firstOrNull { it.currency == currency.name && it.usrId == user?.id }?.let {
                     add(it)
-                } ?: mainRepository.createWallet(Wallet(usrId = user.id, currency = currency.name))
+                } ?: mainRepository.createWallet(Wallet(usrId = user?.id?:1L, currency = currency.name))
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), mutableListOf())
@@ -94,12 +94,12 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                 val toCurrency = receiveCurrency.first()!!
 
                 val commission =
-                    CommissionControllerFirstXFree(currentUser.first().tradesNum)
+                    CommissionControllerFirstXFree(currentUser.first()!!.tradesNum)
                         .calculateCommission(sellAmount.first())
                 val fromAmount = sellAmount.first()
                 val toAmount = receiveAmount.first()
                 val walletFrom = wallets.firstOrNull()
-                    ?.first { it.currency == fromCurrency.name && it.usrId == user.id }
+                    ?.first { it.currency == fromCurrency.name && it.usrId == user!!.id }
                 if (walletFrom!!.amount < fromAmount + commission) {
                     _transaction.emit(
                         TransactionEvent.NotEnoughMoney
@@ -107,10 +107,10 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     return@launch
                 }
                 val walletTo = wallets.firstOrNull()
-                    ?.first { it.currency == toCurrency.name && it.usrId == user.id }
+                    ?.first { it.currency == toCurrency.name && it.usrId == user!!.id }
 
                 val transaction = Transaction(
-                    user.id,
+                    user!!.id,
                     walletFrom.id,
                     walletTo!!.id,
                     fromCurrency,
